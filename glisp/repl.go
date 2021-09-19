@@ -10,7 +10,7 @@ import (
 func main() {
 	fmt.Println("LispG Version 0.0.0.0.1")
 	fmt.Println("Interactive LispG - Press Ctrl+c to exit")
-	rl, err := readline.New("lispg> ")
+	rl, err := readline.NewEx(&readline.Config{Prompt: "lispg> ", HistoryFile: ".lispg_history", DisableAutoSaveHistory: false})
 	if err != nil {
 		panic(err)
 	}
