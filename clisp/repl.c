@@ -1,15 +1,21 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-static char input[2048];
+#include <editline/readline.h>
 
 int main(int argc, char** argv) {
   puts("LispC Version 0.0.0.0.1");
-  puts("Press Ctrl+c to Exit\n");
+  puts("Interactive LispC - Press Ctrl+c to exit");
 
   while (1) {
-    fputs("lispc> ", stdout);
-    fgets(input, 2048, stdin);
-    printf("#=> %s", input);
+    char* input = readline("lispc> ");
+    if (strcmp(input, "(:exit)") == 0) {
+      return 0;
+    }
+    add_history(input);
+    printf("#=> %s\n", input);
+    free(input);
   }
   return 0;
 }

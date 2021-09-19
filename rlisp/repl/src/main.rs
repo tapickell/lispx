@@ -1,26 +1,35 @@
-use ctrlc;
-use std::io::{self, Write};
-use std::process;
+use rustyline::error::ReadlineError;
+use rustyline::Editor;
 
 fn main() {
-    ctrlc::set_handler(move || {
-        println!("BREAK: (a)bort");
-        process::exit(1);
-    })
-    .expect("Error setting ctrl-c handler");
-
     println!("LispR Version 0.0.0.0.1");
-    println!("Press Ctrl+c to Exit");
-    print!("lispr> ");
+    println!("Interactive LispR - Press Ctrl+c to exit");
 
-    io::stdout().flush().unwrap();
-
-    let mut buffer = String::new();
+    let mut rl = Editor::<()>::new();
+    if rl.load_history(".lispr_history").is_err() {
+        println!("No previous history.")
+    }
 
     loop {
-        io::stdin().read_line(&mut buffer).unwrap();
-        println!("#=> {}", buffer.trim());
-        print!("lispr> ");
-        io::stdout().flush().unwrap();
+        let readline = rl.readline("lispr> ");
+        match readline {
+            Ok(line) => {
+                if line == "(:exit)" {
+                    break;
+                }
+                rl.add_history_entry(line.as_str());
+                println!("#=> {}", line);
+            }
+            Err(ReadlineError::Interrupted) => {
+                println!("BREAK: (a)bort");
+                break;
+            }
+            Err(ReadlineError::Eof) => break,
+            Err(err) => {
+                println!("Error: {}", err);
+                break;
+            }
+        }
     }
+    rl.save_history(".lispr_history").unwrap();
 }

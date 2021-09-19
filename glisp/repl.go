@@ -1,20 +1,34 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
+	"strings"
+
+	"github.com/chzyer/readline"
 )
 
 func main() {
-	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Println("LispG Version 0.0.0.0.1")
-	fmt.Println("Press Ctrl+c to Exit")
-	fmt.Print("lispg> ")
+	fmt.Println("Interactive LispG - Press Ctrl+c to exit")
+	rl, err := readline.New("lispg> ")
+	if err != nil {
+		panic(err)
+	}
+	defer rl.Close()
 
-	for scanner.Scan() {
-		fmt.Printf("#=> %s\n", scanner.Text())
-		fmt.Print("lispg> ")
+	for {
+		line, err := rl.Readline()
+		if err != nil {
+			panic(err)
+		}
+		trimmed := strings.Trim(line, "\r\n		")
+		if trimmed == "(:exit)" {
+			break
+		}
+		if trimmed == "" {
+			continue
+		}
+		fmt.Printf("#=> %s\n", trimmed)
 	}
 
 }
