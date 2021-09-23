@@ -1,5 +1,10 @@
+use crate::parser::parse_form;
+
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
+
+mod parser;
+mod types;
 
 fn main() {
     println!("LispR Version 0.0.0.0.1");
@@ -18,6 +23,8 @@ fn main() {
                     break;
                 }
                 rl.add_history_entry(line.as_str());
+                let (_input, parsed_line) = parse_form(line.as_str()).unwrap();
+                dbg!(parsed_line);
                 println!("#=> {}", line);
             }
             Err(ReadlineError::Interrupted) => {
