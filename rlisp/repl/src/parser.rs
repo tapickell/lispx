@@ -14,29 +14,29 @@ pub(crate) fn parse_form(input: &str) -> IResult<&str, Expr> {
         space0,
         delimited(char('('), parse_math_expr, char(')')),
         space0,
-    )(dbg!(input))
+    )(input)
 }
 
 fn parse_math_expr(input: &str) -> IResult<&str, Expr> {
-    let (input, exprs) = many0(tuple((alt((char('+'), char('-'))), parse_term)))(dbg!(input))?;
-    let (input, num1) = parse_term(dbg!(input))?;
+    let (input, exprs) = many0(tuple((alt((char('+'), char('-'))), parse_term)))(input)?;
+    let (input, num1) = parse_term(input)?;
     Ok((input, parse_expr(num1, exprs)))
 }
 
 fn parse_term(input: &str) -> IResult<&str, Expr> {
-    let (input, exprs) = many0(tuple((alt((char('/'), char('*'))), parse_factor)))(dbg!(input))?;
-    let (input, num1) = parse_factor(dbg!(input))?;
+    let (input, exprs) = many0(tuple((alt((char('/'), char('*'))), parse_factor)))(input)?;
+    let (input, num1) = parse_factor(input)?;
     Ok((input, parse_expr(num1, exprs)))
 }
 
 fn parse_factor(input: &str) -> IResult<&str, Expr> {
-    let (input, exprs) = many0(tuple((char('^'), parse_factor)))(dbg!(input))?;
-    let (input, num1) = parse_operation(dbg!(input))?;
+    let (input, exprs) = many0(tuple((char('^'), parse_factor)))(input)?;
+    let (input, num1) = parse_operation(input)?;
     Ok((input, parse_expr(num1, exprs)))
 }
 
 fn parse_operation(input: &str) -> IResult<&str, Expr> {
-    alt((parse_parens, parse_number))(dbg!(input))
+    alt((parse_parens, parse_number))(input)
 }
 
 fn parse_parens(input: &str) -> IResult<&str, Expr> {
@@ -44,7 +44,7 @@ fn parse_parens(input: &str) -> IResult<&str, Expr> {
         space0,
         delimited(char('('), parse_math_expr, char(')')),
         space0,
-    )(dbg!(input))
+    )(input)
 }
 
 fn parse_expr(expr: Expr, rem: Vec<(char, Expr)>) -> Expr {
@@ -69,7 +69,7 @@ fn parse_enum(parsed_num: &str) -> Expr {
 }
 
 fn parse_number(input: &str) -> IResult<&str, Expr> {
-    map(delimited(space0, digit1, space0), parse_enum)(dbg!(input))
+    map(delimited(space0, digit1, space0), parse_enum)(input)
 }
 
 #[cfg(test)]
