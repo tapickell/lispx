@@ -1,8 +1,10 @@
+use crate::evaluator::eval;
 use crate::parser::parse_form;
 
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
 
+mod evaluator;
 mod parser;
 mod types;
 
@@ -19,13 +21,19 @@ fn main() {
         let readline = rl.readline("lispr> ");
         match readline {
             Ok(line) => {
+                rl.add_history_entry(line.as_str());
                 if line == "(:exit)" {
                     break;
                 }
-                rl.add_history_entry(line.as_str());
-                let (_input, parsed_line) = parse_form(line.as_str()).unwrap();
-                dbg!(parsed_line);
-                println!("#=> {}", line);
+                match parse_form(line.as_str()) {
+                    Ok((_input, parsed_line)) => {
+                        let result = eval(parsed_line);
+                        println!("{:?}", result);
+                    }
+                    Err(error) => {
+                        println!("{} -> {}", error, line.as_str());
+                    }
+                }
             }
             Err(ReadlineError::Interrupted) => {
                 println!("BREAK: (a)bort");

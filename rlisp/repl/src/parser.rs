@@ -9,7 +9,7 @@ use nom::sequence::{delimited, tuple};
 use nom::IResult;
 use std::str::FromStr;
 
-pub(crate) fn parse_form(input: &str) -> IResult<&str, Expr> {
+pub(crate) fn parse_form(input: &str) -> Result<(&str, Expr), nom::Err<nom::error::Error<&str>>> {
     delimited(
         space0,
         delimited(char('('), parse_math_expr, char(')')),
@@ -54,11 +54,11 @@ fn parse_expr(expr: Expr, rem: Vec<(char, Expr)>) -> Expr {
 fn parse_op(tup: (char, Expr), expr1: Expr) -> Expr {
     let (op, expr2) = tup;
     match op {
-        '+' => EAdd(Box::new(expr1), Box::new(expr2)),
-        '-' => ESub(Box::new(expr1), Box::new(expr2)),
-        '*' => EMul(Box::new(expr1), Box::new(expr2)),
-        '/' => EDiv(Box::new(expr1), Box::new(expr2)),
-        '^' => EExp(Box::new(expr1), Box::new(expr2)),
+        '+' => EAdd(Box::new(expr2), Box::new(expr1)),
+        '-' => ESub(Box::new(expr2), Box::new(expr1)),
+        '*' => EMul(Box::new(expr2), Box::new(expr1)),
+        '/' => EDiv(Box::new(expr2), Box::new(expr1)),
+        '^' => EExp(Box::new(expr2), Box::new(expr1)),
         _ => panic!("Unknown Operation"),
     }
 }
@@ -82,28 +82,13 @@ mod tests {
         let parsed = parse_form("(+ 2 4)");
         assert_eq!(
             parsed,
-            Ok(("", EAdd(Box::new(ENum(4.0)), Box::new(ENum(2.0)))))
+            Ok(("", EAdd(Box::new(ENum(2.0)), Box::new(ENum(4.0)))))
         );
     }
 
     #[test]
     fn parse_nested_sexp_at_1_form() {
         let parsed = parse_form("(+ (+ 2 2) 2)");
-        assert_eq!(
-            parsed,
-            Ok((
-                "",
-                EAdd(
-                    Box::new(ENum(2.0)),
-                    Box::new(EAdd(Box::new(ENum(2.0)), Box::new(ENum(2.0)))),
-                )
-            ))
-        );
-    }
-
-    #[test]
-    fn parse_nested_sexp_at_2_form() {
-        let parsed = parse_form("(+ 2 (+ 2 2))");
         assert_eq!(
             parsed,
             Ok((
@@ -117,11 +102,26 @@ mod tests {
     }
 
     #[test]
+    fn parse_nested_sexp_at_2_form() {
+        let parsed = parse_form("(+ 2 (+ 2 2))");
+        assert_eq!(
+            parsed,
+            Ok((
+                "",
+                EAdd(
+                    Box::new(ENum(2.0)),
+                    Box::new(EAdd(Box::new(ENum(2.0)), Box::new(ENum(2.0)))),
+                )
+            ))
+        );
+    }
+
+    #[test]
     fn parse_polish_add() {
         let parsed = parse_form("(+ 2 4)");
         assert_eq!(
             parsed,
-            Ok(("", EAdd(Box::new(ENum(4.0)), Box::new(ENum(2.0)))))
+            Ok(("", EAdd(Box::new(ENum(2.0)), Box::new(ENum(4.0)))))
         );
     }
 
@@ -133,11 +133,11 @@ mod tests {
             Ok((
                 "",
                 EAdd(
-                    Box::new(ENum(4.0)),
                     Box::new(EMul(
-                        Box::new(EDiv(Box::new(ENum(20.0)), Box::new(ENum(40.0)))),
-                        Box::new(ENum(2.0))
-                    ))
+                        Box::new(ENum(2.0)),
+                        Box::new(EDiv(Box::new(ENum(40.0)), Box::new(ENum(20.0))))
+                    )),
+                    Box::new(ENum(4.0))
                 )
             ))
         );
