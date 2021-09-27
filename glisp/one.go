@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
-
 	parsec "github.com/prataprc/goparsec"
 )
 
-var input = `(+ (* 2 (/ (- 40 20) 5)) 4)`
+//var input = `(+ (* 2 (/ (- 40 20) 5)) 4)`
 
-func main() {
+func parse_form(input string) parsec.Queryable {
 	var array parsec.Parser
 	ast := parsec.NewAST("pnote", 100)
 
@@ -39,6 +37,7 @@ func main() {
 
 	s := parsec.NewScanner([]byte(input))
 	node, _ := ast.Parsewith(array, s)
-	fmt.Println(node.GetValue())
-	ast.Prettyprint()
+	return node
+	//fmt.Println(node.GetValue())
+	//ast.Prettyprint()
 }
