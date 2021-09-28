@@ -22,6 +22,7 @@ int main(int argc, char** argv);
 lisp_value* lisp_value_number(long x);
 lisp_value* lisp_value_err(char* m);
 lisp_value* lisp_value_sym(char* m);
+lisp_value* lisp_value_read_number(mpc_ast_t* t);
 lisp_value eval_op(lisp_value x, char* op, lisp_value y);
 lisp_value eval(mpc_ast_t* t);
 void lval_print(lisp_value v);

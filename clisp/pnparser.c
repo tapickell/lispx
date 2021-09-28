@@ -116,6 +116,27 @@ lisp_value* lisp_value_sexpr(void) {
   return v;
 }
 
+lisp_value* lisp_value_read_number(mpc_ast_t* t) {
+  errno = 0;
+  long c = strtol(t->contents, NULL, 10);
+  return errno != ERANGE ? lisp_value_number(c) : lisp_value_err("invalid number");
+}
+
+void lisp_value_del(lisp_value* v) {
+  switch (v->type) {
+    case LVAL_NUM: break;
+    case LVAL_ERR: free(v->err); break;
+    case LVAL_SYM: free(v->sym); break;
+    case LVAL_SEXPR:
+                   for (int i = 0; i < v->count; i++) {
+                     lisp_value_del(v->cell[i]);
+                   }
+                   free(v->cell);
+                   break;
+  }
+  free(v);
+}
+
 /* Print an "lval" */
 void lval_print(lisp_value v) {
   switch (v.type) {
