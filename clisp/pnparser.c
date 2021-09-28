@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     free(input);
   }
 
-  mpc_cleanup(4, Number, Symbol, Sexpr, Expr, Lispy);
+  mpc_cleanup(5, Number, Symbol, Sexpr, Expr, Lispy);
   return 0;
 }
 
@@ -85,17 +85,34 @@ lisp_value eval_op(lisp_value x, char* op, lisp_value y) {
   return lisp_value_err(LERR_BAD_OP);
 }
 
-lisp_value lisp_value_number(long x) {
-  lisp_value v;
-  v.type = LVAL_NUM;
-  v.number = x;
+lisp_value* lisp_value_number(long x) {
+  lisp_value* v = malloc(sizeof(lisp_value));
+  v->type = LVAL_NUM;
+  v->number = x;
   return v;
 }
 
-lisp_value lisp_value_err(int x) {
-  lisp_value v;
-  v.type = LVAL_ERR;
-  v.err = x;
+lisp_value* lisp_value_err(char* m) {
+  lisp_value* v = malloc(sizeof(lisp_value));
+  v->type = LVAL_ERR;
+  v->err = malloc(strlen(m) + 1);
+  strcpy(v->err, m);
+  return v;
+}
+
+lisp_value* lisp_value_sym(char* m) {
+  lisp_value* v = malloc(sizeof(lisp_value));
+  v->type = LVAL_SYM;
+  v->sym = malloc(strlen(m) + 1);
+  strcpy(v->sym, m);
+  return v;
+}
+
+lisp_value* lisp_value_sexpr(void) {
+  lisp_value* v = malloc(sizeof(lisp_value));
+  v->type = LVAL_SYM;
+  v->count = 0;
+  v->cell = NULL;
   return v;
 }
 
