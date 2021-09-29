@@ -122,6 +122,29 @@ lisp_value* lisp_value_read_number(mpc_ast_t* t) {
   return errno != ERANGE ? lisp_value_number(c) : lisp_value_err("invalid number");
 }
 
+lisp_value* lisp_value_read(mpc_ast_t* t) {
+  if (strstr(t->tag, "number")) { return lisp_value_read_number(t); }
+  if (strstr(t->tag, "symbol")) { return lisp_value_sym(t->contents); }
+  lisp_value* x = NULL;
+  if (strcmp(t->tag, ">") == 0) { x = lisp_value_sexpr(); }
+  if (strstr(t->tag, "sexpr"))  { x = lisp_value_sexpr(); }
+
+  for (int i = 0; i < t->children_num; i++) {
+    if (strcmp(t->children[i]->contents, "(") == 0) { continue; }
+    if (strcmp(t->children[i]->contents, ")") == 0) { continue; }
+    if (strcmp(t->children[i]->tag, "regex") == 0)  { continue; }
+    x = lisp_value_add(x, lisp_value_read(t->children[i]));
+  }
+  return x;
+}
+
+lisp_value* lisp_value_add(lisp_value* v, lisp_value* x) {
+  v->count++;
+  v->cell = realloc(v->cell, sizeof(lisp_value*) * v->count);
+  v->cell[v->count-1] = x;
+  return v;
+}
+
 void lisp_value_del(lisp_value* v) {
   switch (v->type) {
     case LVAL_NUM: break;
