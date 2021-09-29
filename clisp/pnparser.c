@@ -35,8 +35,10 @@ int main(int argc, char** argv) {
 
     mpc_result_t r;
     if (mpc_parse("<stdin>", input, Lispy, &r)) {
-      lisp_value result = eval(r.output);
-      lval_println(result);
+      /*lisp_value result = eval(r.output);*/
+      lisp_value* sexprs = lisp_value_read(r.output);
+      lval_println(sexprs);
+      lisp_value_del(sexprs);
       /*mpc_ast_print(r.output);*/
       mpc_ast_delete(r.output);
     } else {
@@ -160,28 +162,24 @@ void lisp_value_del(lisp_value* v) {
   free(v);
 }
 
-/* Print an "lval" */
-void lval_print(lisp_value v) {
-  switch (v.type) {
-    /* In the case the type is a number print it */
-    /* Then 'break' out of the switch. */
-    case LVAL_NUM: printf("%li", v.number); break;
-
-    /* In the case the type is an error */
-    case LVAL_ERR:
-      /* Check what type of error it is and print it */
-      if (v.err == LERR_DIV_ZERO) {
-        printf("Error: Division By Zero!");
-      }
-      if (v.err == LERR_BAD_OP)   {
-        printf("Error: Invalid Operator!");
-      }
-      if (v.err == LERR_BAD_NUM)  {
-        printf("Error: Invalid Number!");
-      }
-    break;
+void lval_print(lisp_value* v) {
+  switch (v->type) {
+    case LVAL_NUM: printf("%li", v->number); break;
+    case LVAL_ERR: printf("Error: %s", v->err); break;
+    case LVAL_SYM: printf("%s", v->sym); break;
+    case LVAL_SEXPR: lval_expr_print(v, '(', ')'); break;
   }
 }
 
-/* Print an "lval" followed by a newline */
-void lval_println(lisp_value v) { lval_print(v); putchar('\n'); }
+void lval_expr_print(lisp_value* v, char open, char close) {
+  putchar(open);
+  for (int i = 0; i < v->count; i++) {
+    lval_print(v->cell[i]);
+    if (i != (v->count-1)) {
+      putchar(' ');
+    }
+  }
+  putchar(close);
+}
+
+void lval_println(lisp_value* v) { lval_print(v); putchar('\n'); }
