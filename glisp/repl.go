@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/chzyer/readline"
-	parsec "github.com/prataprc/goparsec"
 )
 
 func main() {
@@ -33,8 +32,4 @@ func main() {
 		result := eval(parsed_node)
 		fmt.Printf("#=> %s\n", result)
 	}
-}
-
-func eval(parsed_node parsec.Queryable) string {
-	return parsed_node.GetValue()
 }
