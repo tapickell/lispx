@@ -1,0 +1,5 @@
+* TODO get "a" for abort working 
+* TODO implment modulo
+* TODO add some std lib function calls
+* TODO work with other number types like float
+* TODO can this be parsed into Rsut AST ??
