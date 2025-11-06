@@ -3,6 +3,7 @@ use crate::parser::parse_form;
 
 mod evaluator;
 mod parser;
+mod tokenizer;
 mod types;
 
 pub fn process_str(line: &str) -> Result<f32, String> {
