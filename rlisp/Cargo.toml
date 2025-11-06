@@ -1,0 +1,6 @@
+[workspace]
+members = [
+  "repl",
+  "rlisp_core",
+]
+resolver = "3"

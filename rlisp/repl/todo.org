@@ -1,5 +1,4 @@
-* TODO get "a" for abort working 
-* TODO implment modulo
-* TODO add some std lib function calls
-* TODO work with other number types like float
-* TODO can this be parsed into Rsut AST ??
+* TODO Generalize the Expr enum to include list and symbol variants so arbitrary S-expressions can be represented.
+* TODO Rework parsing to support variadic forms, negative numbers, floats, and build nested lists instead of operator trees.
+* TODO Introduce an evaluation layer with a Value enum, environment handling, and arithmetic dispatch through that environment.
+* TODO Add core special forms (define, lambda, if) plus unit tests that cover parsing and evaluation.

@@ -1,15 +1,9 @@
-use crate::evaluator::eval;
-use crate::parser::parse_form;
-
+use rlisp_core::process_str;
 use rustyline::error::ReadlineError;
 use rustyline::Editor;
 
-mod evaluator;
-mod parser;
-mod types;
-
 fn main() {
-    println!("LispR Version 0.0.0.0.1");
+    println!("LispR Version 0.0.0.0.2");
     println!("Interactive LispR - Press Ctrl+c to exit");
 
     let mut rl = Editor::<()>::new();
@@ -25,9 +19,8 @@ fn main() {
                 if line == "(:exit)" {
                     break;
                 }
-                match parse_form(line.as_str()) {
-                    Ok((_input, parsed_line)) => {
-                        let result = eval(parsed_line);
+                match process_str(&line.as_str()) {
+                    Ok(result) => {
                         println!("{:?}", result);
                     }
                     Err(error) => {
