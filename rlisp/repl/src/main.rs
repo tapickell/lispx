@@ -29,8 +29,15 @@ fn main() {
                 }
             }
             Err(ReadlineError::Interrupted) => {
-                println!("BREAK: (a)bort");
-                break;
+                match rl.readline("BREAK: (a)bort> ") {
+                    Ok(choice) if choice.trim() == "a" => break,
+                    Err(ReadlineError::Eof) | Err(ReadlineError::Interrupted) => break,
+                    Err(err) => {
+                        println!("Error: {}", err);
+                        break;
+                    }
+                    _ => continue,
+                }
             }
             Err(ReadlineError::Eof) => break,
             Err(err) => {
