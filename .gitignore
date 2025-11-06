@@ -1,1 +1,39 @@
 .*_history
+### General editors and OS cruft
+.DS_Store
+Thumbs.db
+
+### REPL history files
+.*_history
+.lispr_history
+.lispg_history
+.lispc_history
+.lispz_history
+
+### Cargo / Rust
+target/
+**/target/
+
+### Go
+**/*.test
+**/*.out
+**/coverage.txt
+
+### C build artifacts
+**/*.o
+**/*.a
+**/*.so
+**/*.dll
+**/*.dylib
+**/a.out
+
+### Zig
+**/zig-cache/
+**/zig-out/
+
+### Roc
+**/.roc/
+
+### Misc tooling
+**/.idea/
+**/.vscode/

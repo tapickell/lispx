@@ -1,0 +1,4 @@
+- [ ] Settle on a single parsing approach and model numbers, symbols, and lists with Go structs instead of raw parsec nodes.
+- [ ] Implement parseForm to return the new AST without debug printing and integrate it with the REPL.
+- [ ] Rewrite eval to traverse the AST, support variadic arithmetic, and dispatch operations through an environment.
+- [ ] Repair and expand tests to cover parse/eval success and failure cases; remove or finish the unused participle experiment so the package builds cleanly.
